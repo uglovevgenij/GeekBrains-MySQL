@@ -123,3 +123,36 @@ CREATE TABLE media (
   CONSTRAINT fk_media_media_types FOREIGN KEY (media_types_id) REFERENCES media_types (id),
   CONSTRAINT fk_media_users FOREIGN KEY (user_id) REFERENCES users (id)
 );
+
+
+/*
+Приактическое задание к уроку 3
+Придумать 2-3 таблицы для БД vk, которую мы создали на занятии (с перечнем полей, указанием индексов и внешних ключей). Прислать результат в виде скрипта *.sql.
+*/
+CREATE TABLE banlist (
+	id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- id
+	user_id BIGINT UNSIGNED NOT NULL, -- кто в листе
+	ban_type ENUM('temporary', 'permomently') NOT NULL, -- тип блокировки (временный, пожизненный)
+	ban_theme VARCHAR(145) NOT NULL, -- короткое описание бана
+	ban_info TEXT NOT NULL, -- за что посадил (текст)
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, -- когда посадили
+	CONSTRAINT fk_ban_user FOREIGN KEY (user_id) REFERENCES users (id),-- внешний ключ юзера
+	INDEX fk_user_id_idx (user_id),
+	INDEX fk_ban_theme_idx (ban_theme)
+);
+
+CREATE TABLE blog ( -- стена или микроблог
+	news_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,-- id
+	user_id BIGINT UNSIGNED NOT NULL, -- кем создано
+	theme VARCHAR(145) NOT NULL,-- заголовок
+	ban_info TEXT NOT NULL, -- текст
+	media_id BIGINT UNSIGNED NOT NULL, -- вложение медиа
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,-- когда создано
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- когда отредактировано
+	private_perf ENUM('for_all', 'for_friends') NOT NULL,-- настройки приватности (публичная или для друзей)
+	CONSTRAINT fk_news_creator_id FOREIGN KEY (user_id) REFERENCES users (id), -- внешний ключ создателя
+	CONSTRAINT fk_news_media_id FOREIGN KEY (media_id) REFERENCES media (id), -- внешний ключ медиа
+	INDEX fk_theme_idx (theme), -- поиск по теме
+	INDEX fk_user_id_idx (user_id)
+);
+
