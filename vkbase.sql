@@ -129,21 +129,28 @@ CREATE TABLE media (
 Приактическое задание к уроку 3
 Придумать 2-3 таблицы для БД vk, которую мы создали на занятии (с перечнем полей, указанием индексов и внешних ключей). Прислать результат в виде скрипта *.sql.
 */
+
+CREATE TABLE admins (
+	admin_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+	CONSTRAINT fk_admin_user FOREIGN KEY (admin_id) REFERENCES users (id)
+);
+
 CREATE TABLE banlist (
-	id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- id
-	user_id BIGINT UNSIGNED NOT NULL, -- кто в листе
+	-- id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- id
+	user_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, -- кто в листе
+	admin_id BIGINT UNSIGNED NOT NULL,
 	ban_type ENUM('temporary', 'permomently') NOT NULL, -- тип блокировки (временный, пожизненный)
 	ban_theme VARCHAR(145) NOT NULL, -- короткое описание бана
 	ban_info TEXT NOT NULL, -- за что посадил (текст)
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, -- когда посадили
 	CONSTRAINT fk_ban_user FOREIGN KEY (user_id) REFERENCES users (id),-- внешний ключ юзера
-	INDEX fk_user_id_idx (user_id),
-	INDEX fk_ban_theme_idx (ban_theme)
+	CONSTRAINT fk_admin_ban_user FOREIGN KEY (admin_id) REFERENCES admins (admin_id),-- внешний ключ юзера
+	INDEX fk_user_id_idx (user_id)
 );
 
 CREATE TABLE blog ( -- стена или микроблог
 	news_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,-- id
-	user_id BIGINT UNSIGNED NOT NULL, -- кем создано
+	user_id BIGINT UNSIGNED NOT NULL, -- кем создано (чья стена)
 	theme VARCHAR(145) NOT NULL,-- заголовок
 	ban_info TEXT NOT NULL, -- текст
 	media_id BIGINT UNSIGNED NOT NULL, -- вложение медиа
