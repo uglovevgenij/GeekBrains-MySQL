@@ -1,3 +1,9 @@
+DROP DATABASE IF EXISTS shop;
+
+CREATE DATABASE shop;
+
+USE shop;
+
 /* «Операторы, фильтрация, сортировка и ограничение». Для задания 1. */
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
